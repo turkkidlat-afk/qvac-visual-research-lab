@@ -1,0 +1,3341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QVAC Visual Research Lab</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --bg:#070a10;
+  --panel:#0e131d;
+  --panel2:#121925;
+  --panel3:#171f2d;
+  --border:#222c3c;
+  --border2:#2d394d;
+  --text:#f4f7fb;
+  --muted:#8b97a9;
+  --dim:#596578;
+  --accent:#7180ff;
+  --accent2:#929dff;
+  --green:#39d89e;
+  --yellow:#f3bc50;
+  --red:#ff6975;
+  --cyan:#5cc8ff;
+  --shadow:0 25px 80px rgba(0,0,0,.42);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(113,128,255,.13),transparent 27%),
+    radial-gradient(circle at 90% 10%,rgba(57,216,158,.055),transparent 23%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+body.modal-open{overflow:hidden}
+
+.topbar{
+  height:70px;
+  padding:0 30px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  background:rgba(7,10,16,.82);
+  backdrop-filter:blur(18px);
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand-mark{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:linear-gradient(145deg,#8792ff,#4b5ce0);
+  box-shadow:0 8px 25px rgba(85,101,230,.3);
+  font-weight:900;
+}
+
+.brand h1{
+  margin:0;
+  font-size:15px;
+}
+
+.brand p{
+  margin:3px 0 0;
+  color:var(--dim);
+  font-size:9px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.header-button{
+  border:1px solid var(--border);
+  background:#101722;
+  color:#aeb8c8;
+  border-radius:9px;
+  padding:8px 11px;
+  font-size:10px;
+  font-weight:700;
+}
+
+.header-button:hover{
+  color:white;
+  border-color:var(--border2);
+}
+
+.system-status{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 11px;
+  border:1px solid rgba(57,216,158,.16);
+  background:rgba(57,216,158,.045);
+  color:#91e5c4;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.4px;
+}
+
+.system-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px rgba(57,216,158,.8);
+}
+
+.layout{
+  width:min(1480px,calc(100% - 40px));
+  margin:auto;
+  padding:28px 0 45px;
+  display:grid;
+  grid-template-columns:325px minmax(0,1fr);
+  gap:23px;
+}
+
+.sidebar{min-width:0}
+
+.side-card,
+.card{
+  background:linear-gradient(145deg,rgba(18,25,37,.96),rgba(11,15,23,.98));
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+
+.side-card{
+  border-radius:18px;
+  overflow:hidden;
+  position:sticky;
+  top:94px;
+}
+
+.side-header{
+  padding:20px;
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.eyebrow,
+.hero-label{
+  color:var(--accent2);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
+.eyebrow{margin-bottom:8px}
+
+.side-header h2{
+  margin:0;
+  font-size:17px;
+}
+
+.side-header p{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.55;
+}
+
+.upload-area{
+  margin:17px;
+  padding:23px 15px;
+  text-align:center;
+  border:1px dashed #364258;
+  border-radius:15px;
+  background:rgba(113,128,255,.025);
+  transition:.2s;
+}
+
+.upload-area:hover,
+.upload-area.dragover{
+  border-color:var(--accent);
+  background:rgba(113,128,255,.065);
+  transform:translateY(-1px);
+}
+
+.upload-icon{
+  width:44px;
+  height:44px;
+  margin:0 auto 11px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#182136;
+  border:1px solid #293550;
+  color:var(--accent2);
+  font-size:20px;
+}
+
+.upload-area strong{
+  display:block;
+  font-size:12px;
+}
+
+.upload-area span{
+  display:block;
+  margin:5px 0 14px;
+  color:var(--dim);
+  font-size:9px;
+  line-height:1.55;
+}
+
+.file-button{
+  display:inline-flex;
+  padding:9px 13px;
+  border-radius:9px;
+  background:var(--accent);
+  color:white;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.file-button:hover{background:var(--accent2)}
+
+#fileInput{display:none}
+
+.library-header{
+  padding:0 18px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.library-header strong{font-size:11px}
+
+.count{
+  padding:4px 8px;
+  min-width:22px;
+  text-align:center;
+  border-radius:999px;
+  background:#1a2230;
+  color:#aab5c7;
+  font-size:9px;
+  font-weight:800;
+}
+
+.document-list{
+  padding:0 17px 17px;
+  max-height:345px;
+  overflow:auto;
+}
+
+.document-list::-webkit-scrollbar{width:4px}
+
+.document-list::-webkit-scrollbar-thumb{
+  background:#2a3548;
+  border-radius:9px;
+}
+
+.document-item{
+  padding:10px;
+  margin-bottom:7px;
+  border:1px solid var(--border);
+  background:#0c121c;
+  border-radius:10px;
+  transition:.15s;
+}
+
+.document-item:hover{
+  border-color:#344157;
+  background:#101722;
+}
+
+.document-top{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+}
+
+.document-icon{
+  width:27px;
+  height:27px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:#1a2235;
+  color:#aab4ff;
+  font-size:8px;
+  font-weight:900;
+}
+
+.document-name{
+  flex:1;
+  font-size:10px;
+  font-weight:700;
+  line-height:1.35;
+  word-break:break-word;
+}
+
+.document-meta{
+  margin-top:6px;
+  color:var(--dim);
+  font-size:8px;
+}
+
+.document-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:5px;
+  margin-top:6px;
+}
+
+.small-action{
+  border:0;
+  background:transparent;
+  color:#667286;
+  font-size:8px;
+  padding:3px;
+}
+
+.small-action:hover{color:white}
+.small-action.remove:hover{color:var(--red)}
+
+.empty-documents{
+  padding:15px 2px;
+  text-align:center;
+  color:var(--dim);
+  font-size:9px;
+  line-height:1.5;
+}
+
+.privacy-box{
+  margin:0 17px 17px;
+  padding:12px;
+  border:1px solid rgba(57,216,158,.13);
+  background:rgba(57,216,158,.04);
+  border-radius:10px;
+  color:#7fc9ac;
+  font-size:9px;
+  line-height:1.55;
+}
+
+.privacy-box strong{
+  display:block;
+  color:#a7efd2;
+  margin-bottom:3px;
+}
+
+.main{min-width:0}
+
+.hero{padding:3px 2px 24px}
+
+.hero-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:11px;
+}
+
+.hero-label::before{
+  content:"";
+  width:17px;
+  height:1px;
+  background:var(--accent);
+}
+
+.hero h2{
+  margin:0;
+  max-width:900px;
+  font-size:clamp(30px,4vw,47px);
+  line-height:1.02;
+  letter-spacing:-1.8px;
+  background:linear-gradient(120deg,#fff 20%,#aab5ff 88%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  max-width:760px;
+  margin:13px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+}
+
+.card{
+  border-radius:18px;
+  margin-bottom:17px;
+}
+
+.question-card{padding:21px}
+
+.card-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:13px;
+}
+
+.card-heading h3{
+  margin:0;
+  font-size:13px;
+}
+
+.card-heading p{
+  margin:4px 0 0;
+  color:var(--dim);
+  font-size:9px;
+}
+
+.model-pill{
+  padding:6px 9px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#0c121c;
+  color:#7f8a9b;
+  font-size:8px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+textarea{
+  width:100%;
+  min-height:132px;
+  resize:vertical;
+  padding:14px;
+  outline:none;
+  border:1px solid #283449;
+  border-radius:12px;
+  background:#080d15;
+  color:var(--text);
+  font-size:11px;
+  line-height:1.65;
+}
+
+textarea::placeholder{color:#4e5a6c}
+
+textarea:focus{
+  border-color:rgba(113,128,255,.7);
+  box-shadow:0 0 0 3px rgba(113,128,255,.08);
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:11px;
+}
+
+.button{
+  border:1px solid transparent;
+  border-radius:9px;
+  padding:10px 13px;
+  font-size:9px;
+  font-weight:800;
+  transition:.15s;
+}
+
+.button.primary{
+  color:white;
+  background:linear-gradient(135deg,#7583ff,#5666e8);
+  box-shadow:0 8px 23px rgba(86,101,233,.2);
+}
+
+.button.primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 30px rgba(86,101,233,.3);
+}
+
+.button.secondary{
+  color:#aab5c7;
+  background:#151d2b;
+  border-color:#293448;
+}
+
+.button.secondary:hover{
+  color:white;
+  background:#1a2332;
+  border-color:#3b4860;
+}
+
+.status-line{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:12px;
+  color:var(--dim);
+  font-size:9px;
+}
+
+.status-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#596578;
+}
+
+.status-dot.ready{
+  background:var(--green);
+  box-shadow:0 0 9px rgba(57,216,158,.7);
+}
+
+.status-dot.busy{
+  background:var(--yellow);
+  box-shadow:0 0 9px rgba(243,188,80,.6);
+}
+
+.status-dot.error{background:var(--red)}
+
+.result-card{
+  display:none;
+  overflow:hidden;
+}
+
+.result-card.visible{
+  display:block;
+  animation:slideUp .3s ease;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.result-top{
+  padding:19px 21px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.result-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.result-symbol{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:rgba(113,128,255,.12);
+  color:var(--accent2);
+  font-weight:900;
+}
+
+.result-title h3{
+  margin:0;
+  font-size:13px;
+}
+
+.result-title p{
+  margin:3px 0 0;
+  color:var(--dim);
+  font-size:8px;
+}
+
+.answer-body{padding:19px 21px 20px}
+
+.answer{
+  padding:16px;
+  border:1px solid #202a39;
+  border-radius:12px;
+  background:#080d15;
+  color:#d3d9e4;
+  white-space:pre-wrap;
+  font-size:11px;
+  line-height:1.75;
+}
+
+.sources{margin-top:18px}
+
+.sources-heading{
+  margin-bottom:9px;
+  color:#aeb8c8;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+
+.source-item{
+  display:flex;
+  gap:9px;
+  padding:10px;
+  margin-bottom:6px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#0c121c;
+}
+
+.source-number{
+  width:20px;
+  height:20px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:6px;
+  background:#1b2440;
+  color:#aab4ff;
+  font-size:8px;
+  font-weight:900;
+}
+
+.source-content strong{
+  display:block;
+  font-size:9px;
+  color:#cbd2dd;
+}
+
+.source-content span{
+  display:block;
+  margin-top:3px;
+  color:var(--dim);
+  font-size:8px;
+}
+
+.tools-card{padding:20px 21px}
+
+.tool-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.tool{
+  padding:14px;
+  border:1px solid var(--border);
+  background:#0c121c;
+  border-radius:12px;
+  transition:.15s;
+}
+
+.tool:hover{
+  transform:translateY(-2px);
+  border-color:#344157;
+  background:#101722;
+}
+
+.tool-icon{
+  width:29px;
+  height:29px;
+  margin-bottom:10px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:#192136;
+  color:#aab4ff;
+  font-size:11px;
+  font-weight:900;
+}
+
+.tool h4{
+  margin:0 0 5px;
+  font-size:10px;
+}
+
+.tool p{
+  min-height:31px;
+  margin:0 0 11px;
+  color:var(--dim);
+  font-size:8px;
+  line-height:1.5;
+}
+
+.tool button{width:100%}
+
+.tool-result{
+  display:none;
+  margin-top:13px;
+}
+
+.tool-result.visible{
+  display:block;
+  animation:slideUp .25s ease;
+}
+
+.tool-result pre{
+  margin:0;
+  padding:15px;
+  border:1px solid #202a39;
+  border-radius:11px;
+  background:#080d15;
+  color:#cbd2de;
+  white-space:pre-wrap;
+  font-family:inherit;
+  font-size:10px;
+  line-height:1.7;
+}
+
+.footer{
+  padding:6px 2px;
+  color:#465265;
+  text-align:center;
+  font-size:8px;
+}
+
+/* MODALS */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(12px);
+}
+
+.modal-backdrop.visible{
+  display:flex;
+  animation:fadeIn .18s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.modal{
+  width:min(510px,100%);
+  max-height:90vh;
+  overflow:auto;
+  border:1px solid #303b50;
+  border-radius:19px;
+  background:
+    radial-gradient(circle at top right,rgba(113,128,255,.09),transparent 35%),
+    #101621;
+  box-shadow:0 35px 100px rgba(0,0,0,.65);
+  animation:modalIn .22s ease;
+}
+
+@keyframes modalIn{
+  from{opacity:0;transform:scale(.97) translateY(8px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+.modal-header{
+  padding:19px 20px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+
+.modal-title{
+  display:flex;
+  gap:11px;
+  align-items:center;
+}
+
+.modal-icon{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#1b2540;
+  color:#aab4ff;
+  font-weight:900;
+}
+
+.modal-header h3{
+  margin:0;
+  font-size:14px;
+}
+
+.modal-header p{
+  margin:3px 0 0;
+  color:var(--dim);
+  font-size:9px;
+}
+
+.close-modal{
+  width:28px;
+  height:28px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#151d29;
+  color:#8d98aa;
+  font-size:15px;
+}
+
+.close-modal:hover{
+  color:white;
+  border-color:var(--border2);
+}
+
+.modal-body{padding:20px}
+
+.modal-body p{
+  margin:0 0 13px;
+  color:#aeb8c8;
+  font-size:11px;
+  line-height:1.7;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding-top:5px;
+}
+
+.modal-stat-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:15px 0;
+}
+
+.modal-stat{
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0b111a;
+}
+
+.modal-stat span{
+  display:block;
+  color:var(--dim);
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+
+.modal-stat strong{
+  display:block;
+  margin-top:5px;
+  font-size:13px;
+}
+
+.progress-shell{
+  height:7px;
+  margin:17px 0 9px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#202a39;
+}
+
+.progress-bar{
+  width:15%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#6d7cff,#929dff);
+  box-shadow:0 0 14px rgba(113,128,255,.55);
+  transition:width .35s ease;
+}
+
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  color:var(--dim);
+  font-size:8px;
+}
+
+.processing-animation{
+  width:54px;
+  height:54px;
+  margin:3px auto 17px;
+  display:grid;
+  place-items:center;
+  border:1px solid #303d55;
+  border-radius:50%;
+  background:#151d2c;
+  color:#9ba6ff;
+  font-size:21px;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(113,128,255,.05)}
+  50%{box-shadow:0 0 0 12px rgba(113,128,255,0)}
+}
+
+.processing-text{text-align:center}
+
+.processing-text strong{
+  display:block;
+  font-size:13px;
+}
+
+.processing-text span{
+  display:block;
+  margin-top:5px;
+  color:var(--dim);
+  font-size:9px;
+}
+
+.confirm-icon{
+  width:46px;
+  height:46px;
+  margin:0 auto 12px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:rgba(255,105,117,.09);
+  color:var(--red);
+  font-size:19px;
+}
+
+.toast-container{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:200;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
+}
+
+.toast{
+  width:min(350px,calc(100vw - 40px));
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px;
+  border:1px solid #303b4e;
+  border-radius:12px;
+  background:#121925;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+  pointer-events:auto;
+  animation:toastIn .25s ease;
+  transition:.25s;
+}
+
+@keyframes toastIn{
+  from{opacity:0;transform:translateX(15px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+.toast.success{border-color:rgba(57,216,158,.25)}
+.toast.error{border-color:rgba(255,105,117,.25)}
+
+.toast-icon{
+  width:25px;
+  height:25px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:#1a2332;
+  color:var(--accent2);
+  font-size:10px;
+  font-weight:900;
+}
+
+.toast.success .toast-icon{color:var(--green)}
+.toast.error .toast-icon{color:var(--red)}
+
+.toast-content strong{
+  display:block;
+  font-size:10px;
+}
+
+.toast-content span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+
+.busy{
+  opacity:.58;
+  pointer-events:none;
+}
+
+@media(max-width:1050px){
+  .layout{grid-template-columns:280px minmax(0,1fr)}
+  .tool-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:800px){
+  .topbar{padding:0 15px}
+  .header-actions .header-button{display:none}
+  .system-status{display:none}
+
+  .layout{
+    width:min(100% - 24px,700px);
+    grid-template-columns:1fr;
+    padding-top:18px;
+  }
+
+  .side-card{position:static}
+
+  .hero h2{font-size:32px}
+}
+
+@media(max-width:520px){
+  .result-top{align-items:flex-start}
+  .result-top .button{display:none}
+  .modal-stat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+    <div class="brand-mark">Q</div>
+
+    <div>
+      <h1>QVAC Visual Research Lab</h1>
+      <p>Local document intelligence</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+
+    <button class="header-button" id="aboutButton">
+      About
+    </button>
+
+    <button class="header-button" id="privacyButton">
+      Privacy
+    </button>
+
+    <div class="system-status">
+      <span class="system-dot"></span>
+      LOCAL AI · ONLINE
+    </div>
+
+  </div>
+
+</header>
+
+<main class="layout">
+
+  <aside class="sidebar">
+
+    <div class="side-card">
+
+      <div class="side-header">
+
+        <div class="eyebrow">
+          Workspace
+        </div>
+
+        <h2>Research Library</h2>
+
+        <p>
+          Build a private evidence collection from local research material.
+        </p>
+
+      </div>
+
+      <div class="upload-area" id="dropzone">
+
+        <div class="upload-icon">
+          ↑
+        </div>
+
+        <strong>
+          Add research material
+        </strong>
+
+        <span>
+          Drop files here or choose files from your computer.
+          TXT, MD, JSON and CSV supported.
+        </span>
+
+        <label class="file-button" for="fileInput">
+          + Choose Files
+        </label>
+
+        <input
+          id="fileInput"
+          type="file"
+          multiple
+          accept=".txt,.md,.json,.csv"
+        >
+
+      </div>
+
+      <div class="library-header">
+
+        <strong>Documents</strong>
+
+        <span class="count" id="documentCount">
+          0
+        </span>
+
+      </div>
+
+      <div class="document-list" id="documentList">
+
+        <div class="empty-documents">
+          Your research library is empty.
+          Add documents to begin.
+        </div>
+
+      </div>
+
+      <div class="privacy-box">
+
+        <strong>🔒 Processed locally</strong>
+
+        Documents stay inside this local application.
+        QVAC performs AI inference on your device.
+        No cloud AI API is required.
+
+      </div>
+
+    </div>
+
+  </aside>
+
+  <section class="main">
+
+    <section class="hero">
+
+      <div class="hero-label">
+        LOCAL RESEARCH WORKSTATION
+      </div>
+
+      <h2>
+        Investigate information.<br>
+        Keep the intelligence local.
+      </h2>
+
+      <p>
+        Ask questions across your own documents, trace answers back to
+        evidence, compare sources, extract structured facts, and generate
+        research briefs — powered by on-device QVAC inference.
+      </p>
+
+    </section>
+
+    <section class="card question-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <h3>
+            Research Question
+          </h3>
+
+          <p>
+            Ask something about the evidence in your research library.
+          </p>
+
+        </div>
+
+        <div class="model-pill">
+          QVAC · LOCAL MODEL
+        </div>
+
+      </div>
+
+      <textarea
+        id="question"
+        placeholder="Example: What are the main findings across these documents, and what evidence supports each finding?"
+      ></textarea>
+
+      <div class="actions">
+
+        <button
+          class="button primary"
+          id="askButton"
+        >
+          Ask Research Question →
+        </button>
+
+        <button
+          class="button secondary"
+          id="loadModelButton"
+        >
+          Load QVAC Model
+        </button>
+
+        <button
+          class="button secondary"
+          id="clearQuestionButton"
+        >
+          Clear
+        </button>
+
+      </div>
+
+      <div class="status-line">
+
+        <span class="status-dot" id="statusDot"></span>
+
+        <span id="statusText">
+          QVAC model not loaded
+        </span>
+
+      </div>
+
+    </section>
+
+    <section
+      class="card result-card"
+      id="answerCard"
+    >
+
+      <div class="result-top">
+
+        <div class="result-title">
+
+          <div class="result-symbol">
+            ✦
+          </div>
+
+          <div>
+
+            <h3>
+              Research Answer
+            </h3>
+
+            <p>
+              Evidence-grounded local inference
+            </p>
+
+          </div>
+
+        </div>
+
+        <button
+          class="button secondary"
+          id="copyAnswerButton"
+        >
+          Copy Answer
+        </button>
+
+      </div>
+
+      <div class="answer-body">
+
+        <div
+          class="answer"
+          id="answerText"
+        ></div>
+
+        <div class="sources">
+
+          <div class="sources-heading">
+            Evidence Sources
+          </div>
+
+          <div id="sourcesList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="card tools-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <h3>
+            Research Tools
+          </h3>
+
+          <p>
+            Go deeper than question answering.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="tool-grid">
+
+        <div class="tool">
+
+          <div class="tool-icon">
+            +
+          </div>
+
+          <h4>
+            Research Brief
+          </h4>
+
+          <p>
+            Generate a structured overview of the collected evidence.
+          </p>
+
+          <button
+            class="button secondary"
+            id="briefButton"
+          >
+            Generate Brief
+          </button>
+
+        </div>
+
+        <div class="tool">
+
+          <div class="tool-icon">
+            ⇄
+          </div>
+
+          <h4>
+            Contradiction Scan
+          </h4>
+
+          <p>
+            Identify statements that appear to conflict between sources.
+          </p>
+
+          <button
+            class="button secondary"
+            id="contradictionButton"
+          >
+            Compare Sources
+          </button>
+
+        </div>
+
+        <div class="tool">
+
+          <div class="tool-icon">
+            #
+          </div>
+
+          <h4>
+            Fact Extraction
+          </h4>
+
+          <p>
+            Extract people, dates, places, numbers and important claims.
+          </p>
+
+          <button
+            class="button secondary"
+            id="factsButton"
+          >
+            Extract Facts
+          </button>
+
+        </div>
+
+      </div>
+
+      <div
+        class="tool-result"
+        id="toolResult"
+      >
+        <pre id="toolResultText"></pre>
+      </div>
+
+    </section>
+
+    <div class="footer">
+      QVAC Visual Research Lab · Private local AI · Powered by QVAC · @qvac
+    </div>
+
+  </section>
+
+</main>
+
+<!-- WELCOME MODAL -->
+
+<div class="modal-backdrop" id="welcomeModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-icon">
+          Q
+        </div>
+
+        <div>
+          <h3>Welcome to Visual Research Lab</h3>
+          <p>LOCAL-FIRST RESEARCH WORKSPACE</p>
+        </div>
+
+      </div>
+
+      <button
+        class="close-modal"
+        data-close="welcomeModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <p>
+        Turn your own documents into an interactive research workspace.
+        Add your material, load the local QVAC model, and ask questions
+        grounded in the evidence you provide.
+      </p>
+
+      <div class="modal-stat-grid">
+
+        <div class="modal-stat">
+          <span>AI</span>
+          <strong>QVAC</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Processing</span>
+          <strong>Local</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Cloud APIs</span>
+          <strong>None</strong>
+        </div>
+
+      </div>
+
+      <div class="privacy-box" style="margin:0">
+
+        <strong>🔒 Your research stays local</strong>
+
+        The application is designed so your research workflow does not
+        require sending documents to a cloud AI service.
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          class="button primary"
+          data-close="welcomeModal"
+        >
+          Start Researching →
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PRIVACY MODAL -->
+
+<div class="modal-backdrop" id="privacyModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-icon">
+          🔒
+        </div>
+
+        <div>
+          <h3>Local Privacy</h3>
+          <p>NO CLOUD AI REQUIRED</p>
+        </div>
+
+      </div>
+
+      <button
+        class="close-modal"
+        data-close="privacyModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <p>
+        QVAC Visual Research Lab is designed around local processing.
+        Documents are loaded into the local application and research
+        generation is performed using the QVAC model.
+      </p>
+
+      <div class="modal-stat-grid">
+
+        <div class="modal-stat">
+          <span>Documents</span>
+          <strong>Local</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Inference</span>
+          <strong>On-device</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>API Key</span>
+          <strong>Not needed</strong>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          class="button secondary"
+          data-close="privacyModal"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ABOUT MODAL -->
+
+<div class="modal-backdrop" id="aboutModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-icon">
+          ✦
+        </div>
+
+        <div>
+          <h3>About the Lab</h3>
+          <p>QVAC VISUAL RESEARCH LAB</p>
+        </div>
+
+      </div>
+
+      <button
+        class="close-modal"
+        data-close="aboutModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <p>
+        A local research workstation for exploring your own information.
+        It combines document retrieval with on-device AI analysis to help
+        organize evidence and surface useful relationships between sources.
+      </p>
+
+      <div class="modal-stat-grid">
+
+        <div class="modal-stat">
+          <span>Model</span>
+          <strong>QVAC LLM</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>SDK</span>
+          <strong>0.19.0</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Runtime</span>
+          <strong>Local</strong>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          class="button secondary"
+          data-close="aboutModal"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DOCUMENT DETAILS MODAL -->
+
+<div class="modal-backdrop" id="documentModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-icon">
+          DOC
+        </div>
+
+        <div>
+          <h3 id="documentModalName">
+            Document
+          </h3>
+
+          <p>
+            LOCAL DOCUMENT DETAILS
+          </p>
+
+        </div>
+
+      </div>
+
+      <button
+        class="close-modal"
+        data-close="documentModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-stat-grid">
+
+        <div class="modal-stat">
+          <span>Size</span>
+          <strong id="documentModalSize">—</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Chunks</span>
+          <strong id="documentModalChunks">—</strong>
+        </div>
+
+        <div class="modal-stat">
+          <span>Added</span>
+          <strong id="documentModalDate">—</strong>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          class="button secondary"
+          data-close="documentModal"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODEL MODAL -->
+
+<div class="modal-backdrop" id="modelModal">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-icon">
+          Q
+        </div>
+
+        <div>
+          <h3>Initialize QVAC</h3>
+          <p>ON-DEVICE MODEL INITIALIZATION</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-body">
+
+      <div class="processing-animation">
+        Q
+      </div>
+
+      <div class="processing-text">
+
+        <strong id="modelModalTitle">
+          Loading local model
+        </strong>
+
+        <span id="modelModalText">
+          Preparing QVAC for research...
+        </span>
+
+      </div>
+
+      <div class="progress-shell">
+        <div
+          class="progress-bar"
+          id="modelProgress"
+        ></div>
+      </div>
+
+      <div class="progress-label">
+        <span>LOCAL INITIALIZATION</span>
+        <span id="modelProgressLabel">15%</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PROCESSING MODAL -->
+
+<div class="modal-backdrop" id="processingModal">
+
+  <div class="modal">
+
+    <div class="modal-body">
+
+      <div class="processing-animation">
+        ✦
+      </div>
+
+      <div class="processing-text">
+
+        <strong id="processingTitle">
+          Analyzing evidence
+        </strong>
+
+        <span id="processingSubtitle">
+          QVAC is processing your local research material.
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CONFIRM MODAL -->
+
+<div class="modal-backdrop" id="confirmModal">
+
+  <div class="modal">
+
+    <div class="modal-body">
+
+      <div class="confirm-icon">
+        !
+      </div>
+
+      <div class="processing-text">
+
+        <strong id="confirmTitle">
+          Remove document?
+        </strong>
+
+        <span id="confirmText">
+          This document will be removed from the current research library.
+        </span>
+
+      </div>
+
+      <div class="modal-actions" style="margin-top:18px">
+
+        <button
+          class="button secondary"
+          data-close="confirmModal"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="button"
+          id="confirmAction"
+          style="background:#3a1820;color:#ff9ca4;border:1px solid rgba(255,105,117,.25)"
+        >
+          Remove
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- TOASTS -->
+
+<div
+  class="toast-container"
+  id="toastContainer"
+></div>
+
+<script>
+
+const fileInput = document.getElementById("fileInput");
+const dropzone = document.getElementById("dropzone");
+const documentList = document.getElementById("documentList");
+const documentCount = document.getElementById("documentCount");
+const question = document.getElementById("question");
+const askButton = document.getElementById("askButton");
+const loadModelButton = document.getElementById("loadModelButton");
+const clearQuestionButton = document.getElementById("clearQuestionButton");
+const answerCard = document.getElementById("answerCard");
+const answerText = document.getElementById("answerText");
+const sourcesList = document.getElementById("sourcesList");
+const copyAnswerButton = document.getElementById("copyAnswerButton");
+const briefButton = document.getElementById("briefButton");
+const contradictionButton = document.getElementById("contradictionButton");
+const factsButton = document.getElementById("factsButton");
+const toolResult = document.getElementById("toolResult");
+const toolResultText = document.getElementById("toolResultText");
+const statusDot = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
+const toastContainer = document.getElementById("toastContainer");
+const documentModalName = document.getElementById("documentModalName");
+const documentModalSize = document.getElementById("documentModalSize");
+const documentModalChunks = document.getElementById("documentModalChunks");
+const documentModalDate = document.getElementById("documentModalDate");
+
+let currentAnswer = "";
+let confirmCallback = null;
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function formatSize(bytes){
+
+  const value = Number(bytes) || 0;
+
+  if(value < 1024)
+    return `${value} B`;
+
+  if(value < 1024 * 1024)
+    return `${(value / 1024).toFixed(1)} KB`;
+
+  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function safeNumber(value,fallback=0){
+
+  const number = Number(value);
+
+  return Number.isFinite(number)
+    ? number
+    : fallback;
+}
+
+function getChunkCount(doc){
+
+  const candidates = [
+    doc?.chunkCount,
+    doc?.chunks,
+    doc?.evidenceChunks,
+    doc?.evidenceChunkCount,
+    Array.isArray(doc?.chunksList)
+      ? doc.chunksList.length
+      : null
+  ];
+
+  for(const value of candidates){
+
+    const number = Number(value);
+
+    if(Number.isFinite(number)){
+      return number;
+    }
+
+  }
+
+  return 0;
+}
+
+function setStatus(message,type=""){
+
+  statusText.textContent = message;
+
+  statusDot.className = "status-dot";
+
+  if(type){
+    statusDot.classList.add(type);
+  }
+}
+
+function setBusy(value){
+
+  document.body.classList.toggle(
+    "busy",
+    value
+  );
+}
+
+function openModal(id){
+
+  const modal = document.getElementById(id);
+
+  if(!modal) return;
+
+  modal.classList.add("visible");
+
+  document.body.classList.add(
+    "modal-open"
+  );
+}
+
+function closeModal(id){
+
+  const modal = document.getElementById(id);
+
+  if(!modal) return;
+
+  modal.classList.remove("visible");
+
+  if(!document.querySelector(
+    ".modal-backdrop.visible"
+  )){
+
+    document.body.classList.remove(
+      "modal-open"
+    );
+
+  }
+}
+
+document.querySelectorAll(
+  "[data-close]"
+).forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      closeModal(
+        button.dataset.close
+      );
+
+    }
+  );
+
+});
+
+document.querySelectorAll(
+  ".modal-backdrop"
+).forEach(backdrop => {
+
+  backdrop.addEventListener(
+    "click",
+    event => {
+
+      if(event.target === backdrop){
+
+        if(
+          backdrop.id !== "modelModal" &&
+          backdrop.id !== "processingModal"
+        ){
+
+          closeModal(
+            backdrop.id
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+});
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Escape"){
+
+      document
+        .querySelectorAll(
+          ".modal-backdrop.visible"
+        )
+        .forEach(modal => {
+
+          if(
+            modal.id !== "modelModal" &&
+            modal.id !== "processingModal"
+          ){
+
+            closeModal(
+              modal.id
+            );
+
+          }
+
+        });
+
+    }
+
+  }
+);
+
+function showToast(
+  title,
+  message,
+  type="success"
+){
+
+  const toast =
+    document.createElement("div");
+
+  toast.className =
+    `toast ${type}`;
+
+  const icon =
+    type === "success"
+      ? "✓"
+      : type === "error"
+        ? "!"
+        : "i";
+
+  toast.innerHTML = `
+
+    <div class="toast-icon">
+      ${icon}
+    </div>
+
+    <div class="toast-content">
+
+      <strong>
+        ${escapeHtml(title)}
+      </strong>
+
+      <span>
+        ${escapeHtml(message)}
+      </span>
+
+    </div>
+
+  `;
+
+  toastContainer.appendChild(
+    toast
+  );
+
+  setTimeout(() => {
+
+    toast.style.opacity = "0";
+    toast.style.transform =
+      "translateX(15px)";
+
+    setTimeout(
+      () => toast.remove(),
+      250
+    );
+
+  },3500);
+}
+
+/*
+  API HELPER
+
+  JSON requests get Content-Type:
+  application/json.
+
+  FormData requests do NOT get a manually
+  specified Content-Type. The browser adds
+  multipart/form-data with its boundary.
+*/
+
+async function api(url,options={}){
+
+  const config = {
+    ...options,
+    headers:{
+      ...(options.headers || {})
+    }
+  };
+
+  const bodyIsFormData =
+    options.body instanceof FormData;
+
+  if(
+    !bodyIsFormData &&
+    options.body !== undefined &&
+    !config.headers["Content-Type"]
+  ){
+
+    config.headers["Content-Type"] =
+      "application/json";
+
+  }
+
+  const response =
+    await fetch(
+      url,
+      config
+    );
+
+  const text =
+    await response.text();
+
+  let data;
+
+  try{
+
+    data =
+      text
+        ? JSON.parse(text)
+        : {};
+
+  }catch{
+
+    data = {
+      raw:text
+    };
+
+  }
+
+  if(!response.ok){
+
+    throw new Error(
+      data.error ||
+      data.message ||
+      data.raw ||
+      `Request failed with status ${response.status}.`
+    );
+
+  }
+
+  return data;
+}
+
+async function refreshStatus(){
+
+  try{
+
+    const data =
+      await api(
+        "/api/status"
+      );
+
+    const documentTotal =
+      safeNumber(
+        data.documentCount ??
+        data.documents ??
+        0
+      );
+
+    const chunkTotal =
+      safeNumber(
+        data.chunkCount ??
+        data.chunks ??
+        0
+      );
+
+    if(data.modelLoaded){
+
+      setStatus(
+        `QVAC ready · ${documentTotal} document(s) · ${chunkTotal} evidence chunk(s)`,
+        "ready"
+      );
+
+    }else if(data.modelLoading){
+
+      setStatus(
+        `Loading QVAC model locally... · ${documentTotal} document(s) · ${chunkTotal} evidence chunk(s)`,
+        "busy"
+      );
+
+    }else{
+
+      setStatus(
+        `${documentTotal} document(s) loaded · ${chunkTotal} evidence chunk(s) · QVAC model not loaded`
+      );
+
+    }
+
+  }catch(error){
+
+    setStatus(
+      "Local server unavailable.",
+      "error"
+    );
+
+  }
+}
+
+async function refreshDocuments(){
+
+  const data =
+    await api(
+      "/api/documents"
+    );
+
+  const docs =
+    Array.isArray(data.documents)
+      ? data.documents
+      : [];
+
+  documentCount.textContent =
+    docs.length;
+
+  if(!docs.length){
+
+    documentList.innerHTML = `
+
+      <div class="empty-documents">
+        Your research library is empty.
+        Add documents to begin.
+      </div>
+
+    `;
+
+    return;
+  }
+
+  documentList.innerHTML =
+    docs.map(
+      doc => {
+
+        const chunks =
+          getChunkCount(doc);
+
+        return `
+
+          <div
+            class="document-item"
+            data-document-id="${escapeHtml(doc.id)}"
+          >
+
+            <div class="document-top">
+
+              <div class="document-icon">
+                DOC
+              </div>
+
+              <div class="document-name">
+                ${escapeHtml(doc.name || "Untitled document")}
+              </div>
+
+            </div>
+
+            <div class="document-meta">
+              ${chunks} evidence chunk(s)
+              · ${formatSize(doc.size)}
+            </div>
+
+            <div class="document-actions">
+
+              <button
+                class="small-action view-document"
+                data-id="${escapeHtml(doc.id)}"
+              >
+                Details
+              </button>
+
+              <button
+                class="small-action remove"
+                data-id="${escapeHtml(doc.id)}"
+                data-name="${escapeHtml(doc.name || "this document")}"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+  document
+    .querySelectorAll(
+      ".view-document"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          showDocumentDetails(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+  document
+    .querySelectorAll(
+      ".small-action.remove"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          showConfirm(
+            "Remove document?",
+            `${button.dataset.name} will be removed from this research workspace.`,
+            async () => {
+
+              await api(
+                `/api/documents/${encodeURIComponent(button.dataset.id)}`,
+                {
+                  method:"DELETE"
+                }
+              );
+
+              await refreshDocuments();
+              await refreshStatus();
+
+              showToast(
+                "Document removed",
+                "The document was removed from the local research library."
+              );
+
+            }
+          );
+
+        }
+      );
+
+    });
+}
+
+async function showDocumentDetails(id){
+
+  try{
+
+    const data =
+      await api(
+        "/api/documents"
+      );
+
+    const docs =
+      Array.isArray(data.documents)
+        ? data.documents
+        : [];
+
+    const selectedDocument =
+      docs.find(
+        item => item.id === id
+      );
+
+    if(!selectedDocument){
+      return;
+    }
+
+    documentModalName.textContent =
+      selectedDocument.name ||
+      "Document";
+
+    documentModalSize.textContent =
+      formatSize(
+        selectedDocument.size
+      );
+
+    documentModalChunks.textContent =
+      String(
+        getChunkCount(
+          selectedDocument
+        )
+      );
+
+    const createdAt =
+      selectedDocument.createdAt ??
+      selectedDocument.addedAt;
+
+    documentModalDate.textContent =
+      createdAt
+        ? new Date(
+            createdAt
+          ).toLocaleDateString()
+        : "—";
+
+    openModal(
+      "documentModal"
+    );
+
+  }catch(error){
+
+    showToast(
+      "Could not open details",
+      error.message,
+      "error"
+    );
+
+  }
+}
+
+function showConfirm(
+  title,
+  message,
+  callback
+){
+
+  document.getElementById(
+    "confirmTitle"
+  ).textContent =
+    title;
+
+  document.getElementById(
+    "confirmText"
+  ).textContent =
+    message;
+
+  confirmCallback =
+    callback;
+
+  openModal(
+    "confirmModal"
+  );
+}
+
+document.getElementById(
+  "confirmAction"
+).addEventListener(
+  "click",
+  async () => {
+
+    if(!confirmCallback){
+      return;
+    }
+
+    const callback =
+      confirmCallback;
+
+    confirmCallback =
+      null;
+
+    closeModal(
+      "confirmModal"
+    );
+
+    try{
+
+      setBusy(true);
+
+      await callback();
+
+    }catch(error){
+
+      showToast(
+        "Action failed",
+        error.message,
+        "error"
+      );
+
+    }finally{
+
+      setBusy(false);
+
+    }
+
+  }
+);
+
+async function addFile(file){
+
+  const extension =
+    file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+  const supported = [
+    "txt",
+    "md",
+    "json",
+    "csv"
+  ];
+
+  if(
+    !supported.includes(
+      extension
+    )
+  ){
+
+    showToast(
+      "Unsupported file",
+      `${file.name} is not supported yet.`,
+      "error"
+    );
+
+    return;
+  }
+
+  if(
+    file.size >
+    2 * 1024 * 1024
+  ){
+
+    showToast(
+      "File too large",
+      `${file.name} is larger than the 2 MB limit.`,
+      "error"
+    );
+
+    return;
+  }
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "file",
+    file,
+    file.name
+  );
+
+  await api(
+    "/api/documents",
+    {
+      method:"POST",
+      body:formData
+    }
+  );
+
+  showToast(
+    "Document added",
+    `${file.name} is now part of your local research library.`
+  );
+}
+
+async function handleFiles(files){
+
+  if(!files.length){
+    return;
+  }
+
+  setBusy(true);
+
+  setStatus(
+    "Adding documents to local research library...",
+    "busy"
+  );
+
+  try{
+
+    for(
+      const file of files
+    ){
+
+      await addFile(
+        file
+      );
+
+    }
+
+    await refreshDocuments();
+    await refreshStatus();
+
+  }catch(error){
+
+    setStatus(
+      error.message,
+      "error"
+    );
+
+    showToast(
+      "Upload failed",
+      error.message,
+      "error"
+    );
+
+  }finally{
+
+    setBusy(false);
+
+  }
+}
+
+fileInput.addEventListener(
+  "change",
+  async event => {
+
+    await handleFiles(
+      [...event.target.files]
+    );
+
+    fileInput.value = "";
+
+  }
+);
+
+dropzone.addEventListener(
+  "dragover",
+  event => {
+
+    event.preventDefault();
+
+    dropzone.classList.add(
+      "dragover"
+    );
+
+  }
+);
+
+dropzone.addEventListener(
+  "dragleave",
+  () => {
+
+    dropzone.classList.remove(
+      "dragover"
+    );
+
+  }
+);
+
+dropzone.addEventListener(
+  "drop",
+  async event => {
+
+    event.preventDefault();
+
+    dropzone.classList.remove(
+      "dragover"
+    );
+
+    await handleFiles(
+      [...event.dataTransfer.files]
+    );
+
+  }
+);
+
+loadModelButton.addEventListener(
+  "click",
+  async () => {
+
+    openModal(
+      "modelModal"
+    );
+
+    setBusy(true);
+
+    setStatus(
+      "Loading QVAC model locally...",
+      "busy"
+    );
+
+    const progress =
+      document.getElementById(
+        "modelProgress"
+      );
+
+    const progressLabel =
+      document.getElementById(
+        "modelProgressLabel"
+      );
+
+    const modelText =
+      document.getElementById(
+        "modelModalText"
+      );
+
+    progress.style.width =
+      "20%";
+
+    progressLabel.textContent =
+      "20%";
+
+    modelText.textContent =
+      "Preparing local inference runtime...";
+
+    const stages = [
+      [35,"Initializing QVAC..."],
+      [55,"Preparing model weights..."],
+      [75,"Initializing local inference..."],
+      [90,"Finalizing model..."]
+    ];
+
+    let stageIndex = 0;
+
+    const interval =
+      setInterval(
+        () => {
+
+          if(
+            stageIndex >=
+            stages.length
+          ){
+
+            clearInterval(
+              interval
+            );
+
+            return;
+          }
+
+          const [
+            percent,
+            text
+          ] =
+            stages[
+              stageIndex++
+            ];
+
+          progress.style.width =
+            `${percent}%`;
+
+          progressLabel.textContent =
+            `${percent}%`;
+
+          modelText.textContent =
+            text;
+
+        },
+        700
+      );
+
+    try{
+
+      await api(
+        "/api/model/load",
+        {
+          method:"POST",
+          body:JSON.stringify({})
+        }
+      );
+
+      clearInterval(
+        interval
+      );
+
+      progress.style.width =
+        "100%";
+
+      progressLabel.textContent =
+        "100%";
+
+      document.getElementById(
+        "modelModalTitle"
+      ).textContent =
+        "QVAC is ready";
+
+      modelText.textContent =
+        "Local inference engine initialized successfully.";
+
+      setStatus(
+        "QVAC model loaded locally and ready.",
+        "ready"
+      );
+
+      setTimeout(
+        () => {
+
+          closeModal(
+            "modelModal"
+          );
+
+          showToast(
+            "QVAC ready",
+            "The local AI model is ready for research."
+          );
+
+        },
+        900
+      );
+
+    }catch(error){
+
+      clearInterval(
+        interval
+      );
+
+      closeModal(
+        "modelModal"
+      );
+
+      setStatus(
+        `Model error: ${error.message}`,
+        "error"
+      );
+
+      showToast(
+        "Model initialization failed",
+        error.message,
+        "error"
+      );
+
+    }finally{
+
+      setBusy(false);
+
+    }
+
+  }
+);
+
+askButton.addEventListener(
+  "click",
+  async () => {
+
+    const value =
+      question.value.trim();
+
+    if(!value){
+
+      showToast(
+        "Question required",
+        "Enter a research question before starting.",
+        "error"
+      );
+
+      question.focus();
+
+      return;
+    }
+
+    openModal(
+      "processingModal"
+    );
+
+    document.getElementById(
+      "processingTitle"
+    ).textContent =
+      "Analyzing evidence";
+
+    document.getElementById(
+      "processingSubtitle"
+    ).textContent =
+      "QVAC is searching and reasoning over your local research material.";
+
+    setBusy(true);
+
+    setStatus(
+      "QVAC is analyzing local evidence...",
+      "busy"
+    );
+
+    try{
+
+      const data =
+        await api(
+          "/api/research",
+          {
+            method:"POST",
+            body:JSON.stringify({
+              question:value
+            })
+          }
+        );
+
+      currentAnswer =
+        String(
+          data.answer ||
+          data.result ||
+          data.text ||
+          "No answer returned."
+        );
+
+      answerText.textContent =
+        currentAnswer;
+
+      const sources =
+        Array.isArray(
+          data.sources
+        )
+          ? data.sources
+          : Array.isArray(
+              data.evidenceSources
+            )
+              ? data.evidenceSources
+              : [];
+
+      if(sources.length){
+
+        sourcesList.innerHTML =
+          sources
+            .map(
+              (source,index) => {
+
+                const score =
+                  safeNumber(
+                    source.relevanceScore ??
+                    source.score ??
+                    source.relevance ??
+                    source.rankScore ??
+                    0
+                  );
+
+                const percentage =
+                  score <= 1
+                    ? Math.round(
+                        score * 100
+                      )
+                    : Math.round(
+                        score
+                      );
+
+                return `
+
+                  <div class="source-item">
+
+                    <div class="source-number">
+                      ${index + 1}
+                    </div>
+
+                    <div class="source-content">
+
+                      <strong>
+                        ${escapeHtml(
+                          source.documentName ||
+                          source.name ||
+                          "Unknown document"
+                        )}
+                      </strong>
+
+                      <span>
+                        Evidence chunk
+                        ${escapeHtml(
+                          source.chunkId ||
+                          source.id ||
+                          String(index + 1)
+                        )}
+                        · relevance score
+                        ${percentage}%
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+      }else{
+
+        sourcesList.innerHTML = `
+
+          <div class="empty-documents">
+            No evidence sources were returned.
+          </div>
+
+        `;
+
+      }
+
+      answerCard.classList.add(
+        "visible"
+      );
+
+      closeModal(
+        "processingModal"
+      );
+
+      setStatus(
+        `Answer generated locally from ${sources.length} evidence source(s).`,
+        "ready"
+      );
+
+      showToast(
+        "Research complete",
+        `QVAC generated an answer using ${sources.length} local evidence source(s).`
+      );
+
+      answerCard.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+    }catch(error){
+
+      closeModal(
+        "processingModal"
+      );
+
+      setStatus(
+        `Research error: ${error.message}`,
+        "error"
+      );
+
+      showToast(
+        "Research failed",
+        error.message,
+        "error"
+      );
+
+    }finally{
+
+      setBusy(false);
+
+    }
+
+  }
+);
+
+clearQuestionButton.addEventListener(
+  "click",
+  () => {
+
+    question.value = "";
+
+    answerCard.classList.remove(
+      "visible"
+    );
+
+    toolResult.classList.remove(
+      "visible"
+    );
+
+    currentAnswer = "";
+
+    showToast(
+      "Workspace cleared",
+      "The current question and results were cleared."
+    );
+
+  }
+);
+
+copyAnswerButton.addEventListener(
+  "click",
+  async () => {
+
+    if(!currentAnswer){
+      return;
+    }
+
+    try{
+
+      await navigator.clipboard.writeText(
+        currentAnswer
+      );
+
+      copyAnswerButton.textContent =
+        "Copied ✓";
+
+      showToast(
+        "Answer copied",
+        "The research answer is now on your clipboard."
+      );
+
+      setTimeout(
+        () => {
+
+          copyAnswerButton.textContent =
+            "Copy Answer";
+
+        },
+        1200
+      );
+
+    }catch{
+
+      showToast(
+        "Copy failed",
+        "Your browser did not allow clipboard access.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+async function runTool(
+  endpoint,
+  button,
+  loadingMessage,
+  originalLabel,
+  title
+){
+
+  openModal(
+    "processingModal"
+  );
+
+  document.getElementById(
+    "processingTitle"
+  ).textContent =
+    title;
+
+  document.getElementById(
+    "processingSubtitle"
+  ).textContent =
+    "QVAC is analyzing the local document collection.";
+
+  setBusy(true);
+
+  button.textContent =
+    "Analyzing...";
+
+  setStatus(
+    loadingMessage,
+    "busy"
+  );
+
+  try{
+
+    const data =
+      await api(
+        endpoint,
+        {
+          method:"POST",
+          body:JSON.stringify({})
+        }
+      );
+
+    const rawResult =
+      data.result ||
+      data.brief ||
+      data.review ||
+      data.facts ||
+      data.contradictions ||
+      data.text ||
+      data.answer ||
+      "No result returned.";
+
+    const result =
+      typeof rawResult === "string"
+        ? rawResult
+        : JSON.stringify(
+            rawResult,
+            null,
+            2
+          );
+
+    toolResultText.textContent =
+      result;
+
+    toolResult.classList.add(
+      "visible"
+    );
+
+    closeModal(
+      "processingModal"
+    );
+
+    setStatus(
+      "QVAC analysis completed locally.",
+      "ready"
+    );
+
+    showToast(
+      title,
+      "Analysis completed using the local QVAC model."
+    );
+
+    toolResult.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+  }catch(error){
+
+    closeModal(
+      "processingModal"
+    );
+
+    setStatus(
+      `Tool error: ${error.message}`,
+      "error"
+    );
+
+    showToast(
+      "Analysis failed",
+      error.message,
+      "error"
+    );
+
+  }finally{
+
+    button.textContent =
+      originalLabel;
+
+    setBusy(false);
+
+  }
+}
+
+briefButton.addEventListener(
+  "click",
+  () =>
+    runTool(
+      "/api/research/brief",
+      briefButton,
+      "Generating research brief with QVAC...",
+      "Generate Brief",
+      "Generating research brief"
+    )
+);
+
+contradictionButton.addEventListener(
+  "click",
+  () =>
+    runTool(
+      "/api/research/contradictions",
+      contradictionButton,
+      "Comparing documents with QVAC...",
+      "Compare Sources",
+      "Scanning for contradictions"
+    )
+);
+
+factsButton.addEventListener(
+  "click",
+  () =>
+    runTool(
+      "/api/research/facts",
+      factsButton,
+      "Extracting structured facts from local evidence...",
+      "Extract Facts",
+      "Extracting structured facts"
+    )
+);
+
+document.getElementById(
+  "privacyButton"
+).addEventListener(
+  "click",
+  () =>
+    openModal(
+      "privacyModal"
+    )
+);
+
+document.getElementById(
+  "aboutButton"
+).addEventListener(
+  "click",
+  () =>
+    openModal(
+      "aboutModal"
+    )
+);
+
+/*
+  Initial application state
+*/
+
+refreshDocuments()
+  .catch(error => {
+
+    showToast(
+      "Library error",
+      error.message,
+      "error"
+    );
+
+  });
+
+refreshStatus();
+
+setInterval(
+  refreshStatus,
+  5000
+);
+
+/*
+  Show welcome modal once per browser.
+*/
+
+if(
+  localStorage.getItem(
+    "qvacResearchWelcome"
+  ) !== "seen"
+){
+
+  setTimeout(
+    () => {
+
+      openModal(
+        "welcomeModal"
+      );
+
+      localStorage.setItem(
+        "qvacResearchWelcome",
+        "seen"
+      );
+
+    },
+    500
+  );
+
+}
+
+</script>
+
+</body>
+</html>
